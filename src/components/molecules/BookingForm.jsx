@@ -213,7 +213,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             </select>
           </div>
 <Input
-            label="Package Weight (kg)"
+            label="Weight (kg)"
             type="number"
             step="0.1"
             placeholder="2.5"
@@ -223,7 +223,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             required
           />
           <Input
-            label="Package Value ($)"
+            label="Value ($)"
             type="number"
             step="0.01"
             placeholder="150.00"
