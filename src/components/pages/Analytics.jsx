@@ -1,44 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import Chart from 'react-apexcharts';
+import memoize from 'lodash.memoize';
 import ApperIcon from '@/components/ApperIcon';
 import Button from '@/components/atoms/Button';
 import MetricCard from '@/components/atoms/MetricCard';
 import { deliveryService, driverService } from '@/services';
-
-const Analytics = () => {
+const Analytics = memo(() => {
   const [deliveries, setDeliveries] = useState([]);
   const [drivers, setDrivers] = useState([]);
+  const [driverEfficiency, setDriverEfficiency] = useState([]);
+  const [performanceComparison, setPerformanceComparison] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dateRange, setDateRange] = useState('7d');
-
-  useEffect(() => {
+  const [refreshKey, setRefreshKey] = useState(0);
+useEffect(() => {
     loadAnalyticsData();
-  }, []);
+  }, [refreshKey]);
 
-  const loadAnalyticsData = async () => {
+  const loadAnalyticsData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const [deliveriesData, driversData] = await Promise.all([
+      const [deliveriesData, driversData, efficiencyData, comparisonData] = await Promise.all([
         deliveryService.getAll(),
-        driverService.getAll()
+        driverService.getAll(),
+        driverService.getDriverEfficiency(dateRange),
+        driverService.getPerformanceComparison()
       ]);
       setDeliveries(deliveriesData);
       setDrivers(driversData);
+      setDriverEfficiency(efficiencyData);
+      setPerformanceComparison(comparisonData);
+      toast.success('Analytics data updated successfully');
     } catch (err) {
       setError(err.message || 'Failed to load analytics data');
       toast.error('Failed to load analytics data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
 
-  // Calculate key metrics
-  const calculateMetrics = () => {
+  const handleRefresh = useCallback(() => {
+    setRefreshKey(prev => prev + 1);
+  }, []);
+// Memoized metrics calculation for performance
+  const metrics = useMemo(() => {
     const totalDeliveries = deliveries.length;
     const completedDeliveries = deliveries.filter(d => d.status === 'delivered').length;
     const cancelledDeliveries = deliveries.filter(d => d.status === 'cancelled').length;
@@ -46,6 +56,10 @@ const Analytics = () => {
     const cancelRate = totalDeliveries > 0 ? ((cancelledDeliveries / totalDeliveries) * 100).toFixed(1) : '0.0';
     const avgDriverRating = drivers.length > 0 ? (drivers.reduce((sum, d) => sum + d.rating, 0) / drivers.length).toFixed(1) : '0.0';
     const totalRevenue = deliveries.reduce((sum, d) => sum + (d.packageDetails?.value || 0), 0);
+    const avgPerformanceScore = driverEfficiency.length > 0 ? 
+      (driverEfficiency.reduce((sum, d) => sum + d.performanceScore, 0) / driverEfficiency.length).toFixed(0) : '0';
+    const topPerformerScore = driverEfficiency.length > 0 ? 
+      Math.max(...driverEfficiency.map(d => d.performanceScore)) : 0;
 
     return {
       totalDeliveries,
@@ -53,9 +67,11 @@ const Analytics = () => {
       completionRate,
       cancelRate,
       avgDriverRating,
-      totalRevenue
+      totalRevenue,
+      avgPerformanceScore,
+      topPerformerScore
     };
-  };
+  }, [deliveries, drivers, driverEfficiency]);
 
   // Generate chart data
   const generateVolumeChartData = () => {
@@ -133,37 +149,94 @@ const Analytics = () => {
       }
     };
   };
-
-  const generateDriverPerformanceData = () => {
-    const driverStats = drivers.map(driver => ({
-      name: driver.name.split(' ')[0], // First name only
-      deliveries: driver.totalDeliveries,
-      rating: driver.rating
-    })).sort((a, b) => b.deliveries - a.deliveries).slice(0, 5);
-
+// Optimized chart data generation with memoization
+  const generateDriverPerformanceData = useMemo(() => {
+    const topPerformers = driverEfficiency.slice(0, 8);
+    
     return {
       series: [
         {
-          name: 'Deliveries',
-          data: driverStats.map(d => d.deliveries)
+          name: 'Performance Score',
+          data: topPerformers.map(d => d.performanceScore)
         },
         {
-          name: 'Rating',
-          data: driverStats.map(d => d.rating * 200) // Scale rating for visibility
+          name: 'Efficiency %',
+          data: topPerformers.map(d => d.efficiency)
+        },
+        {
+          name: 'Deliveries/Day',
+          data: topPerformers.map(d => d.deliveriesPerDay * 10) // Scale for visibility
         }
       ],
       options: {
-        chart: { type: 'bar', stacked: false },
-        colors: ['#7C3AED', '#10B981'],
-        xaxis: { categories: driverStats.map(d => d.name) },
+        chart: { 
+          type: 'bar', 
+          stacked: false,
+          toolbar: { show: true, tools: { download: true } }
+        },
+        colors: ['#7C3AED', '#10B981', '#F59E0B'],
+        xaxis: { 
+          categories: topPerformers.map(d => d.name.split(' ')[0]),
+          labels: { style: { fontSize: '11px' } }
+        },
         yaxis: [
-          { title: { text: 'Total Deliveries' } },
-          { opposite: true, title: { text: 'Rating (x200)' } }
+          { title: { text: 'Performance Score' } },
+          { opposite: true, title: { text: 'Efficiency % / Deliveries (x10)' } }
         ],
-        legend: { position: 'top' }
+        legend: { position: 'top' },
+        plotOptions: {
+          bar: { 
+            columnWidth: '60%',
+            dataLabels: { position: 'top' }
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          style: { fontSize: '10px' }
+        }
       }
     };
-  };
+  }, [driverEfficiency]);
+
+  const generateEfficiencyTrendData = useMemo(() => {
+    const trendData = driverEfficiency.slice(0, 5);
+    
+    return {
+      series: [{
+        name: 'Efficiency Trend',
+        data: trendData.map(d => ({
+          x: d.name.split(' ')[0],
+          y: d.efficiency,
+          fillColor: d.trend === 'up' ? '#10B981' : '#EF4444'
+        }))
+      }],
+      options: {
+        chart: { 
+          type: 'bar',
+          toolbar: { show: false }
+        },
+        colors: ['#10B981'],
+        plotOptions: {
+          bar: {
+            distributed: true,
+            columnWidth: '50%'
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: (val) => `${val.toFixed(0)}%`
+        },
+        xaxis: {
+          categories: trendData.map(d => d.name.split(' ')[0])
+        },
+        yaxis: {
+          title: { text: 'Efficiency %' },
+          max: 100
+        },
+        legend: { show: false }
+      }
+    };
+  }, [driverEfficiency]);
 
   if (loading) {
     return (
@@ -192,14 +265,12 @@ const Analytics = () => {
           Try Again
         </Button>
       </div>
-    );
+);
   }
 
-  const metrics = calculateMetrics();
   const volumeChart = generateVolumeChartData();
   const statusChart = generateStatusChartData();
-  const performanceChart = generateDriverPerformanceData();
-
+  const efficiencyChart = generateEfficiencyTrendData;
   return (
     <div className="p-6 space-y-6 max-w-full overflow-hidden">
       {/* Header */}
@@ -217,7 +288,10 @@ const Analytics = () => {
             <option value="7d">Last 7 days</option>
             <option value="30d">Last 30 days</option>
             <option value="90d">Last 90 days</option>
-          </select>
+</select>
+          <Button variant="outline" icon="RefreshCw" size="sm" onClick={handleRefresh}>
+            Refresh
+          </Button>
           <Button variant="outline" icon="Download" size="sm">
             Export
           </Button>
@@ -248,6 +322,14 @@ const Analytics = () => {
           change="Driver performance"
           changeType="positive"
           icon="Star"
+          color="accent"
+/>
+        <MetricCard
+          title="Avg Performance"
+          value={metrics.avgPerformanceScore}
+          change={`Top: ${metrics.topPerformerScore}`}
+          changeType="positive"
+          icon="TrendingUp"
           color="accent"
         />
         <MetricCard
@@ -297,9 +379,9 @@ const Analytics = () => {
             type="donut"
             height={300}
           />
-        </motion.div>
+</motion.div>
 
-        {/* Driver Performance */}
+        {/* Driver Performance Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,14 +393,14 @@ const Analytics = () => {
             <ApperIcon name="Users" size={20} className="text-surface-400" />
           </div>
           <Chart
-            options={performanceChart.options}
-            series={performanceChart.series}
+            options={generateDriverPerformanceData.options}
+            series={generateDriverPerformanceData.series}
             type="bar"
             height={300}
           />
         </motion.div>
 
-        {/* Performance Summary */}
+        {/* Driver Efficiency Trends */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -326,7 +408,63 @@ const Analytics = () => {
           className="bg-white rounded-lg p-6 shadow-sm border border-surface-200"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-surface-900">Performance Summary</h3>
+            <h3 className="font-semibold text-surface-900">Driver Efficiency Trends</h3>
+            <ApperIcon name="Activity" size={20} className="text-surface-400" />
+          </div>
+          <Chart
+            options={efficiencyChart.options}
+            series={efficiencyChart.series}
+            type="bar"
+            height={300}
+          />
+        </motion.div>
+{/* Performance Leaderboard */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-lg p-6 shadow-sm border border-surface-200"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-surface-900">Performance Leaderboard</h3>
+            <ApperIcon name="Award" size={20} className="text-surface-400" />
+          </div>
+          <div className="space-y-3">
+            {driverEfficiency.slice(0, 5).map((driver, index) => (
+              <div key={driver.id} className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                    ${index === 0 ? 'bg-yellow-100 text-yellow-800' : 
+                      index === 1 ? 'bg-gray-100 text-gray-800' : 
+                      index === 2 ? 'bg-orange-100 text-orange-800' : 
+                      'bg-surface-100 text-surface-600'}`}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <p className="font-medium text-surface-900">{driver.name}</p>
+                    <p className="text-sm text-surface-600">{driver.deliveriesPerDay} deliveries/day</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-surface-900">{driver.performanceScore}</p>
+                  <p className={`text-sm ${driver.trend === 'up' ? 'text-success' : 'text-error'}`}>
+                    {driver.trend === 'up' ? '↗' : '↘'} {driver.trendValue}%
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Enhanced Performance Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white rounded-lg p-6 shadow-sm border border-surface-200"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold text-surface-900">Performance Insights</h3>
             <ApperIcon name="BarChart3" size={20} className="text-surface-400" />
           </div>
           <div className="space-y-4">
@@ -335,9 +473,19 @@ const Analytics = () => {
                 <div className="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center">
                   <ApperIcon name="CheckCircle2" size={16} className="text-success" />
                 </div>
-                <span className="font-medium text-surface-900">On-Time Delivery</span>
+                <span className="font-medium text-surface-900">On-Time Performance</span>
               </div>
               <span className="text-lg font-bold text-success">92.5%</span>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                  <ApperIcon name="TrendingUp" size={16} className="text-primary" />
+                </div>
+                <span className="font-medium text-surface-900">Avg Performance Score</span>
+              </div>
+              <span className="text-lg font-bold text-primary">{metrics.avgPerformanceScore}</span>
             </div>
             
             <div className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
@@ -347,17 +495,7 @@ const Analytics = () => {
                 </div>
                 <span className="font-medium text-surface-900">Avg Delivery Time</span>
               </div>
-              <span className="text-lg font-bold text-warning">2.3h</span>
-            </div>
-            
-            <div className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <ApperIcon name="MapPin" size={16} className="text-primary" />
-                </div>
-                <span className="font-medium text-surface-900">Avg Distance</span>
-              </div>
-              <span className="text-lg font-bold text-primary">8.7km</span>
+              <span className="text-lg font-bold text-warning">2.1h</span>
             </div>
             
             <div className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
@@ -369,11 +507,30 @@ const Analytics = () => {
               </div>
               <span className="text-lg font-bold text-accent">${(metrics.totalRevenue / Math.max(metrics.totalDeliveries, 1)).toFixed(0)}</span>
             </div>
+
+            {performanceComparison && (
+              <div className="flex items-center justify-between p-3 bg-surface-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center">
+                    <ApperIcon name="Award" size={16} className="text-secondary" />
+                  </div>
+                  <div>
+                    <span className="font-medium text-surface-900">Top Performer</span>
+                    <p className="text-sm text-surface-600">{performanceComparison.topPerformer?.name}</p>
+                  </div>
+                </div>
+                <span className="text-lg font-bold text-secondary">
+                  {performanceComparison.topPerformer?.totalDeliveries || 0}
+                </span>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
     </div>
-  );
-};
+);
+});
+
+Analytics.displayName = 'Analytics';
 
 export default Analytics;
