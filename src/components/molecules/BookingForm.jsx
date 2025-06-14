@@ -126,22 +126,22 @@ const BookingForm = ({ onSuccess, onCancel }) => {
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <Input
-              label="Pickup Street Address"
+              label="Street Address"
               value={formData.pickupAddress.street}
               onChange={(e) => updateField('pickupAddress', 'street', e.target.value)}
               error={errors.pickupStreet}
               required
             />
           </div>
-          <Input
-            label="Pickup City"
+<Input
+            label="City"
             value={formData.pickupAddress.city}
             onChange={(e) => updateField('pickupAddress', 'city', e.target.value)}
             error={errors.pickupCity}
             required
           />
-          <Input
-            label="Pickup Postal Code"
+<Input
+            label="Postal Code"
             value={formData.pickupAddress.postalCode}
             onChange={(e) => updateField('pickupAddress', 'postalCode', e.target.value)}
             error={errors.pickupPostal}
@@ -157,24 +157,24 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           Delivery Address
 </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
+<div className="md:col-span-2">
             <Input
-              label="Delivery Street Address"
+              label="Street Address"
               value={formData.deliveryAddress.street}
               onChange={(e) => updateField('deliveryAddress', 'street', e.target.value)}
               error={errors.deliveryStreet}
               required
             />
           </div>
-          <Input
-            label="Delivery City"
+<Input
+            label="City"
             value={formData.deliveryAddress.city}
             onChange={(e) => updateField('deliveryAddress', 'city', e.target.value)}
             error={errors.deliveryCity}
             required
           />
-          <Input
-            label="Delivery Postal Code"
+<Input
+            label="Postal Code"
             value={formData.deliveryAddress.postalCode}
             onChange={(e) => updateField('deliveryAddress', 'postalCode', e.target.value)}
             error={errors.deliveryPostal}
