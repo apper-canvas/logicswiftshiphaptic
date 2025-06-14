@@ -133,8 +133,8 @@ const BookingForm = ({ onSuccess, onCancel }) => {
               error={errors.pickupStreet}
               required
             />
-          </div>
-<Input
+</div>
+          <Input
             label="City"
             placeholder="New York"
             value={formData.pickupAddress.city}
@@ -142,7 +142,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             error={errors.pickupCity}
             required
           />
-<Input
+          <Input
             label="Postal Code"
             placeholder="10001"
             value={formData.pickupAddress.postalCode}
@@ -169,8 +169,8 @@ const BookingForm = ({ onSuccess, onCancel }) => {
               error={errors.deliveryStreet}
               required
             />
-          </div>
-<Input
+</div>
+          <Input
             label="City"
             placeholder="Los Angeles"
             value={formData.deliveryAddress.city}
@@ -178,7 +178,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             error={errors.deliveryCity}
             required
           />
-<Input
+          <Input
             label="Postal Code"
             placeholder="90210"
             value={formData.deliveryAddress.postalCode}
