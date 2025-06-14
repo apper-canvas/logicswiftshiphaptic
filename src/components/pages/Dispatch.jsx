@@ -222,7 +222,7 @@ const Dispatch = () => {
             </div>
           </motion.div>
 
-          <motion.div
+<motion.div
             whileHover={{ scale: 1.02 }}
             className="p-4 bg-surface-50 rounded-lg border border-surface-200 cursor-pointer hover:border-secondary hover:bg-secondary/5 transition-all"
           >
@@ -235,10 +235,9 @@ const Dispatch = () => {
                 <p className="text-sm text-surface-600">Plan efficient routes</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-
       {/* Pending Deliveries */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
