@@ -43,14 +43,14 @@ const Input = ({
           </div>
         )}
         
-        <input
+<input
           type={type}
           value={value}
           onChange={onChange}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           disabled={disabled}
-          placeholder={shouldFloat ? placeholder : ''}
+          placeholder={placeholder}
           className={`
             w-full px-3 py-3 border rounded-lg text-surface-900 placeholder-surface-400 
             transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary
