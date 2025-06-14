@@ -1,0 +1,117 @@
+[
+  {
+    "id": "1",
+    "name": "Marcus Rodriguez",
+    "email": "marcus.rodriguez@swiftship.com",
+    "phone": "+1-555-0101",
+    "location": {
+      "lat": 40.7505,
+      "lng": -73.9934
+    },
+    "status": "busy",
+    "activeDeliveries": ["1", "5"],
+    "vehicleType": "van",
+    "vehicleInfo": {
+      "make": "Ford",
+      "model": "Transit",
+      "year": 2022,
+      "licensePlate": "NYC-4567"
+    },
+    "rating": 4.8,
+    "totalDeliveries": 1247,
+    "joinedDate": "2023-03-15",
+    "profilePhoto": "marcus_photo.jpg"
+  },
+  {
+    "id": "2",
+    "name": "Sarah Chen",
+    "email": "sarah.chen@swiftship.com",
+    "phone": "+1-555-0102",
+    "location": {
+      "lat": 40.7282,
+      "lng": -73.9942
+    },
+    "status": "busy",
+    "activeDeliveries": ["2"],
+    "vehicleType": "motorcycle",
+    "vehicleInfo": {
+      "make": "Honda",
+      "model": "CB300R",
+      "year": 2023,
+      "licensePlate": "NYC-7890"
+    },
+    "rating": 4.9,
+    "totalDeliveries": 892,
+    "joinedDate": "2023-06-22",
+    "profilePhoto": "sarah_photo.jpg"
+  },
+  {
+    "id": "3",
+    "name": "David Thompson",
+    "email": "david.thompson@swiftship.com",
+    "phone": "+1-555-0103",
+    "location": {
+      "lat": 40.7381,
+      "lng": -73.9708
+    },
+    "status": "available",
+    "activeDeliveries": [],
+    "vehicleType": "car",
+    "vehicleInfo": {
+      "make": "Toyota",
+      "model": "Prius",
+      "year": 2021,
+      "licensePlate": "NYC-2345"
+    },
+    "rating": 4.7,
+    "totalDeliveries": 654,
+    "joinedDate": "2023-08-10",
+    "profilePhoto": "david_photo.jpg"
+  },
+  {
+    "id": "4",
+    "name": "Lisa Park",
+    "email": "lisa.park@swiftship.com",
+    "phone": "+1-555-0104",
+    "location": {
+      "lat": 40.7614,
+      "lng": -73.9776
+    },
+    "status": "available",
+    "activeDeliveries": [],
+    "vehicleType": "bicycle",
+    "vehicleInfo": {
+      "make": "Specialized",
+      "model": "E-Bike",
+      "year": 2023,
+      "licensePlate": "N/A"
+    },
+    "rating": 4.6,
+    "totalDeliveries": 423,
+    "joinedDate": "2023-09-05",
+    "profilePhoto": "lisa_photo.jpg"
+  },
+  {
+    "id": "5",
+    "name": "Ahmed Hassan",
+    "email": "ahmed.hassan@swiftship.com",
+    "phone": "+1-555-0105",
+    "location": {
+      "lat": 40.7074,
+      "lng": -74.0113
+    },
+    "status": "offline",
+    "activeDeliveries": [],
+    "vehicleType": "van",
+    "vehicleInfo": {
+      "make": "Mercedes",
+      "model": "Sprinter",
+      "year": 2022,
+      "licensePlate": "NYC-6789"
+    },
+    "rating": 4.9,
+    "totalDeliveries": 1089,
+    "joinedDate": "2023-01-20",
+    "profilePhoto": "ahmed_photo.jpg"
+  }
+]

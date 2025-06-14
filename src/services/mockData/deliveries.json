@@ -1,0 +1,197 @@
+[
+  {
+    "id": "1",
+    "trackingId": "SW123456",
+    "pickupAddress": {
+      "street": "123 Business Plaza",
+      "city": "New York",
+      "postalCode": "10001",
+      "coordinates": {
+        "lat": 40.7505,
+        "lng": -73.9934
+      }
+    },
+    "deliveryAddress": {
+      "street": "456 Residential Ave",
+      "city": "New York",
+      "postalCode": "10002",
+      "coordinates": {
+        "lat": 40.7158,
+        "lng": -73.9722
+      }
+    },
+    "status": "in_transit",
+    "driverId": "1",
+    "estimatedTime": "2024-12-20T15:30:00Z",
+    "packageDetails": {
+      "type": "document",
+      "weight": 0.5,
+      "dimensions": {
+        "length": 30,
+        "width": 20,
+        "height": 2
+      },
+      "value": 100,
+      "instructions": "Handle with care - important legal documents"
+    },
+    "signature": null,
+    "proofPhoto": null,
+    "createdAt": "2024-12-20T10:00:00Z"
+  },
+  {
+    "id": "2",
+    "trackingId": "SW123457",
+    "pickupAddress": {
+      "street": "789 Tech Hub",
+      "city": "New York",
+      "postalCode": "10003",
+      "coordinates": {
+        "lat": 40.7282,
+        "lng": -73.9942
+      }
+    },
+    "deliveryAddress": {
+      "street": "321 Corporate Center",
+      "city": "New York",
+      "postalCode": "10004",
+      "coordinates": {
+        "lat": 40.7074,
+        "lng": -74.0113
+      }
+    },
+    "status": "assigned",
+    "driverId": "2",
+    "estimatedTime": "2024-12-20T16:45:00Z",
+    "packageDetails": {
+      "type": "electronics",
+      "weight": 2.5,
+      "dimensions": {
+        "length": 40,
+        "width": 30,
+        "height": 15
+      },
+      "value": 1500,
+      "instructions": "Fragile - electronics equipment"
+    },
+    "signature": null,
+    "proofPhoto": null,
+    "createdAt": "2024-12-20T11:15:00Z"
+  },
+  {
+    "id": "3",
+    "trackingId": "SW123458",
+    "pickupAddress": {
+      "street": "555 Medical Plaza",
+      "city": "New York",
+      "postalCode": "10005",
+      "coordinates": {
+        "lat": 40.7381,
+        "lng": -73.9708
+      }
+    },
+    "deliveryAddress": {
+      "street": "777 Health Center",
+      "city": "New York",
+      "postalCode": "10006",
+      "coordinates": {
+        "lat": 40.7420,
+        "lng": -73.9834
+      }
+    },
+    "status": "delivered",
+    "driverId": "3",
+    "estimatedTime": "2024-12-20T14:00:00Z",
+    "packageDetails": {
+      "type": "medical",
+      "weight": 1.0,
+      "dimensions": {
+        "length": 25,
+        "width": 15,
+        "height": 10
+      },
+      "value": 500,
+      "instructions": "Temperature sensitive - keep refrigerated"
+    },
+    "signature": "John Doe",
+    "proofPhoto": "proof_photo_3.jpg",
+    "createdAt": "2024-12-20T09:30:00Z"
+  },
+  {
+    "id": "4",
+    "trackingId": "SW123459",
+    "pickupAddress": {
+      "street": "888 Fashion District",
+      "city": "New York",
+      "postalCode": "10007",
+      "coordinates": {
+        "lat": 40.7532,
+        "lng": -73.9896
+      }
+    },
+    "deliveryAddress": {
+      "street": "444 Boutique Row",
+      "city": "New York",
+      "postalCode": "10008",
+      "coordinates": {
+        "lat": 40.7614,
+        "lng": -73.9776
+      }
+    },
+    "status": "pending",
+    "driverId": null,
+    "estimatedTime": null,
+    "packageDetails": {
+      "type": "clothing",
+      "weight": 3.0,
+      "dimensions": {
+        "length": 50,
+        "width": 35,
+        "height": 20
+      },
+      "value": 800,
+      "instructions": "Designer clothing - keep flat"
+    },
+    "signature": null,
+    "proofPhoto": null,
+    "createdAt": "2024-12-20T12:00:00Z"
+  },
+  {
+    "id": "5",
+    "trackingId": "SW123460",
+    "pickupAddress": {
+      "street": "222 Food Market",
+      "city": "New York",
+      "postalCode": "10009",
+      "coordinates": {
+        "lat": 40.7282,
+        "lng": -73.9851
+      }
+    },
+    "deliveryAddress": {
+      "street": "333 Restaurant Row",
+      "city": "New York",
+      "postalCode": "10010",
+      "coordinates": {
+        "lat": 40.7505,
+        "lng": -73.9875
+      }
+    },
+    "status": "pickup",
+    "driverId": "1",
+    "estimatedTime": "2024-12-20T17:15:00Z",
+    "packageDetails": {
+      "type": "food",
+      "weight": 5.0,
+      "dimensions": {
+        "length": 60,
+        "width": 40,
+        "height": 25
+      },
+      "value": 200,
+      "instructions": "Perishable food items - deliver immediately"
+    },
+    "signature": null,
+    "proofPhoto": null,
+    "createdAt": "2024-12-20T13:45:00Z"
+  }
+]
