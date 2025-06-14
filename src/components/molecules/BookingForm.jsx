@@ -127,6 +127,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           <div className="md:col-span-2">
             <Input
               label="Street Address"
+              placeholder="123 Main Street, Apt 4B"
               value={formData.pickupAddress.street}
               onChange={(e) => updateField('pickupAddress', 'street', e.target.value)}
               error={errors.pickupStreet}
@@ -135,6 +136,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           </div>
 <Input
             label="City"
+            placeholder="New York"
             value={formData.pickupAddress.city}
             onChange={(e) => updateField('pickupAddress', 'city', e.target.value)}
             error={errors.pickupCity}
@@ -142,6 +144,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           />
 <Input
             label="Postal Code"
+            placeholder="10001"
             value={formData.pickupAddress.postalCode}
             onChange={(e) => updateField('pickupAddress', 'postalCode', e.target.value)}
             error={errors.pickupPostal}
@@ -160,6 +163,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
 <div className="md:col-span-2">
             <Input
               label="Street Address"
+              placeholder="456 Oak Avenue, Suite 2A"
               value={formData.deliveryAddress.street}
               onChange={(e) => updateField('deliveryAddress', 'street', e.target.value)}
               error={errors.deliveryStreet}
@@ -168,6 +172,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           </div>
 <Input
             label="City"
+            placeholder="Los Angeles"
             value={formData.deliveryAddress.city}
             onChange={(e) => updateField('deliveryAddress', 'city', e.target.value)}
             error={errors.deliveryCity}
@@ -175,6 +180,7 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           />
 <Input
             label="Postal Code"
+            placeholder="90210"
             value={formData.deliveryAddress.postalCode}
             onChange={(e) => updateField('deliveryAddress', 'postalCode', e.target.value)}
             error={errors.deliveryPostal}
@@ -206,19 +212,21 @@ const BookingForm = ({ onSuccess, onCancel }) => {
               ))}
             </select>
           </div>
-          <Input
+<Input
             label="Weight (kg)"
             type="number"
             step="0.1"
+            placeholder="2.5"
             value={formData.packageDetails.weight}
             onChange={(e) => updateField('packageDetails', 'weight', e.target.value)}
             error={errors.weight}
             required
           />
-          <Input
+<Input
             label="Declared Value ($)"
             type="number"
             step="0.01"
+            placeholder="150.00"
             value={formData.packageDetails.value}
             onChange={(e) => updateField('packageDetails', 'value', e.target.value)}
             error={errors.value}
