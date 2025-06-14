@@ -151,49 +151,188 @@ useEffect(() => {
   };
 // Optimized chart data generation with memoization
   const generateDriverPerformanceData = useMemo(() => {
-    const topPerformers = driverEfficiency.slice(0, 8);
+    const topPerformers = driverEfficiency.slice(0, 6); // Reduced for better visibility
     
     return {
       series: [
         {
           name: 'Performance Score',
-          data: topPerformers.map(d => d.performanceScore)
-        },
-        {
-          name: 'Efficiency %',
-          data: topPerformers.map(d => d.efficiency)
-        },
-        {
-          name: 'Deliveries/Day',
-          data: topPerformers.map(d => d.deliveriesPerDay * 10) // Scale for visibility
+          data: topPerformers.map(d => ({
+            x: d.name,
+            y: d.performanceScore,
+            goals: [
+              {
+                name: 'Target',
+                value: 80,
+                strokeHeight: 2,
+                strokeColor: '#10B981'
+              }
+            ]
+          }))
         }
       ],
       options: {
         chart: { 
-          type: 'bar', 
-          stacked: false,
-          toolbar: { show: true, tools: { download: true } }
-        },
-        colors: ['#7C3AED', '#10B981', '#F59E0B'],
-        xaxis: { 
-          categories: topPerformers.map(d => d.name.split(' ')[0]),
-          labels: { style: { fontSize: '11px' } }
-        },
-        yaxis: [
-          { title: { text: 'Performance Score' } },
-          { opposite: true, title: { text: 'Efficiency % / Deliveries (x10)' } }
-        ],
-        legend: { position: 'top' },
-        plotOptions: {
-          bar: { 
-            columnWidth: '60%',
-            dataLabels: { position: 'top' }
+          type: 'bar',
+          height: 350,
+          toolbar: { 
+            show: true, 
+            tools: { 
+              download: true,
+              selection: false,
+              zoom: false,
+              zoomin: false,
+              zoomout: false,
+              pan: false,
+              reset: false
+            }
           }
         },
+        plotOptions: {
+          bar: {
+            horizontal: true,
+            barHeight: '70%',
+            distributed: false,
+            dataLabels: {
+              position: 'top'
+            }
+          }
+        },
+        colors: ['#7C3AED'],
         dataLabels: {
           enabled: true,
-          style: { fontSize: '10px' }
-        }
+          textAnchor: 'start',
+          style: {
+            fontSize: '12px',
+            fontWeight: '600',
+            colors: ['#374151']
+          },
+          formatter: function (val, opt) {
+            return val + ' pts'
+          },
+          offsetX: 5,
+          dropShadow: {
+            enabled: false
+          }
+        },
+        xaxis: {
+          categories: topPerformers.map(d => d.name),
+          labels: {
+            style: {
+              fontSize: '12px',
+              fontWeight: '500',
+              colors: ['#6B7280']
+            },
+            formatter: function (val) {
+              return val.length > 15 ? val.substring(0, 15) + '...' : val;
+            }
+          },
+          title: {
+            text: 'Performance Score',
+            style: {
+              fontSize: '14px',
+              fontWeight: '600'
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              fontSize: '11px',
+              fontWeight: '500',
+              colors: ['#6B7280']
+            },
+            maxWidth: 120,
+            formatter: function (val) {
+              // Wrap long names
+              if (val.length > 20) {
+                const words = val.split(' ');
+                if (words.length > 1) {
+                  return words[0] + '\n' + words.slice(1).join(' ');
+                }
+                return val.substring(0, 18) + '...';
+              }
+              return val;
+            }
+          }
+        },
+        grid: {
+          show: true,
+          borderColor: '#E5E7EB',
+          strokeDashArray: 3,
+          position: 'back',
+          xaxis: {
+            lines: {
+              show: true
+            }
+          },
+          yaxis: {
+            lines: {
+              show: false
+            }
+          }
+        },
+        tooltip: {
+          enabled: true,
+          theme: 'light',
+          style: {
+            fontSize: '12px'
+          },
+          custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            const driver = topPerformers[dataPointIndex];
+            return `
+              <div class="p-3 bg-white shadow-lg rounded-lg border">
+                <div class="font-semibold text-gray-900 mb-2">${driver.name}</div>
+                <div class="space-y-1 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Performance Score:</span>
+                    <span class="font-medium">${driver.performanceScore} pts</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Efficiency:</span>
+                    <span class="font-medium">${driver.efficiency.toFixed(1)}%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Deliveries/Day:</span>
+                    <span class="font-medium">${driver.deliveriesPerDay}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Rating:</span>
+                    <span class="font-medium">${driver.rating.toFixed(1)} ⭐</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        },
+        legend: {
+          show: false
+        },
+        responsive: [
+          {
+            breakpoint: 768,
+            options: {
+              plotOptions: {
+                bar: {
+                  barHeight: '60%'
+                }
+              },
+              dataLabels: {
+                style: {
+                  fontSize: '10px'
+                }
+              },
+              yaxis: {
+                labels: {
+                  style: {
+                    fontSize: '10px'
+                  },
+                  maxWidth: 100
+                }
+              }
+            }
+          }
+        ]
       }
     };
   }, [driverEfficiency]);
