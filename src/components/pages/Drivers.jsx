@@ -174,7 +174,7 @@ const Drivers = () => {
     );
   }
 
-  if (error) {
+if (error) {
     return (
       <div className="p-6 text-center">
         <ApperIcon name="AlertCircle" size={48} className="mx-auto text-error mb-4" />
@@ -184,8 +184,6 @@ const Drivers = () => {
           Try Again
         </Button>
       </div>
-    );
-</div>
     );
   }
 
