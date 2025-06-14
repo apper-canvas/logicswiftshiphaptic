@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { toast } from 'react-toastify';
-import Input from '@/components/atoms/Input';
-import Button from '@/components/atoms/Button';
-import ApperIcon from '@/components/ApperIcon';
-import { deliveryService } from '@/services';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import Input from "@/components/atoms/Input";
+import Button from "@/components/atoms/Button";
+import ApperIcon from "@/components/ApperIcon";
+import { deliveryService } from "@/services";
 
 const BookingForm = ({ onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -123,10 +123,10 @@ const BookingForm = ({ onSuccess, onCancel }) => {
           <ApperIcon name="MapPin" size={16} className="mr-2" />
           Pickup Address
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <Input
-              label="Street Address"
+              label="Pickup Street Address"
               value={formData.pickupAddress.street}
               onChange={(e) => updateField('pickupAddress', 'street', e.target.value)}
               error={errors.pickupStreet}
@@ -134,14 +134,14 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             />
           </div>
           <Input
-            label="City"
+            label="Pickup City"
             value={formData.pickupAddress.city}
             onChange={(e) => updateField('pickupAddress', 'city', e.target.value)}
             error={errors.pickupCity}
             required
           />
           <Input
-            label="Postal Code"
+            label="Pickup Postal Code"
             value={formData.pickupAddress.postalCode}
             onChange={(e) => updateField('pickupAddress', 'postalCode', e.target.value)}
             error={errors.pickupPostal}
@@ -155,11 +155,11 @@ const BookingForm = ({ onSuccess, onCancel }) => {
         <h3 className="font-semibold text-surface-900 flex items-center">
           <ApperIcon name="Navigation" size={16} className="mr-2" />
           Delivery Address
-        </h3>
+</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
             <Input
-              label="Street Address"
+              label="Delivery Street Address"
               value={formData.deliveryAddress.street}
               onChange={(e) => updateField('deliveryAddress', 'street', e.target.value)}
               error={errors.deliveryStreet}
@@ -167,14 +167,14 @@ const BookingForm = ({ onSuccess, onCancel }) => {
             />
           </div>
           <Input
-            label="City"
+            label="Delivery City"
             value={formData.deliveryAddress.city}
             onChange={(e) => updateField('deliveryAddress', 'city', e.target.value)}
             error={errors.deliveryCity}
             required
           />
           <Input
-            label="Postal Code"
+            label="Delivery Postal Code"
             value={formData.deliveryAddress.postalCode}
             onChange={(e) => updateField('deliveryAddress', 'postalCode', e.target.value)}
             error={errors.deliveryPostal}
